@@ -1,0 +1,38 @@
+#================================== Description ========================================
+# Filebeat Config to send Elasticsearch/Logstash/Kibana in a docker host to Elasticsea-
+# sh cluster.
+
+name: filebeat-wazuh-docker-logs-shipper
+
+filebeat.modules:
+  - module: wazuh
+    alerts:
+      enabled: true
+    archives:
+      enabled: false
+
+setup.template.json.enabled: true
+setup.template.json.path: /usr/share/filebeat/wazuh-template.json
+setup.template.json.name: wazuh
+setup.template.overwrite: true
+setup.ilm.enabled: false
+
+#output.elasticsearch.protocol: https
+#output.elasticsearch.ssl.certificate: /etc/elasticsearch/certs/elasticsearch.crt
+#output.elasticsearch.ssl.key: /etc/elasticsearch/certs/elasticsearch.key
+#output.elasticsearch.ssl.certificate_authorities: /etc/elasticsearch/certs/ca/ca.crt
+#output.elasticsearch.ssl.verification_mode: strict
+#output.elasticsearch.username: elastic
+
+logging.metrics.enabled: false
+
+seccomp:
+  default_action: allow
+  syscalls:
+  - action: allow
+    names:
+    - rseq
+
+# Output to Logstash
+output.logstash:
+  hosts: ["logstash:5044"]
